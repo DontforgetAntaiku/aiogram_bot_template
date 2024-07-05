@@ -13,14 +13,3 @@ async def manager_keyboard():
         ],
         resize_keyboard=True,
     )
-
-
-async def author_keyboard():
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            [
-                KeyboardButton(text=_("Статистика")),
-            ]
-        ],
-        resize_keyboard=True,
-    )

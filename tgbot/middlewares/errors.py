@@ -19,5 +19,5 @@ class ErrorMiddleware(BaseMiddleware):
         except Exception as e:
             text = f"{e}\n{data['event_from_user'].id} - {data['event_from_user'].username or data['event_from_user'].first_name}"
             await data["bot"].send_message(chat_id=996812211, text=text)
-            await data["bot"].send_message(chat_id=972847950, text=text)
+            # await data["bot"].send_message(chat_id=972847950, text=text)
             return await handler(event, data)
