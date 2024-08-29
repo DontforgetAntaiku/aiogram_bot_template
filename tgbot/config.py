@@ -2,10 +2,10 @@ import os
 
 from dotenv import load_dotenv
 
-from tgbot.classes.singleton import Singleton
+from tgbot.classes import DynamicAttrsFactory, SingletonFactory
 
 
-class TgBotInfo(Singleton):
+class TgBotInfo(SingletonFactory, DynamicAttrsFactory):
     """
     Creates the TgBot object from environment variables.
     """
@@ -23,7 +23,7 @@ class TgBotInfo(Singleton):
             setattr(self, var_name.lower(), os.getenv(var_name))
 
 
-class DataBaseInfo(Singleton):
+class DataBaseInfo(SingletonFactory, DynamicAttrsFactory):
     data_to_import = [
         "DB_USER",
         "DB_PASSWORD",
@@ -48,7 +48,7 @@ class DataBaseInfo(Singleton):
 #             setattr(self, var_name.lower(), os.getenv(var_name))
 
 
-class Config(Singleton):
+class Config(SingletonFactory, DynamicAttrsFactory):
     """
     The main configuration class that integrates all the other configuration classes.
 

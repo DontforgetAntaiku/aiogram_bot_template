@@ -3,11 +3,11 @@ from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from tgbot.classes.singleton import Singleton
+from tgbot.classes.singleton import SingletonFactory
 from tgbot.db.models import Base
 
 
-class DB(Singleton):
+class DB(SingletonFactory):
     def init(self, user, password, dbname, host, port):
         self.connection_string = (
             f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{dbname}"

@@ -3,12 +3,13 @@ from typing import Any, Awaitable, Callable, Dict
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 
-from tgbot.db.database import MyDb
+from tgbot.db.database import DB
 
 
 class DbMiddleware(BaseMiddleware):
-    def __init__(self):
+    def __init__(self, db: DB):
         super().__init__()
+        self.db = DB
 
     async def __call__(
         self,
@@ -16,5 +17,6 @@ class DbMiddleware(BaseMiddleware):
         event: TelegramObject,
         data: Dict[str, Any],
     ) -> Any:
-        data["db"] = MyDb()
-        return await handler(event, data)
+        async with self.db.get_session() as session:
+            data["db_session"] = session
+            return await handler(event, data)

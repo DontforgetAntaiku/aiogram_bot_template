@@ -4,6 +4,7 @@ import os
 
 import betterlogging as bl
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, Redis, RedisStorage
 from aiogram.types import BotCommand
@@ -50,7 +51,10 @@ async def main():
         host=config.DataBase.db_host,
         port=config.DataBase.db_port,
     )
-    bot = Bot(token=config.TgBot.bot_token, parse_mode=ParseMode.HTML)
+    bot = Bot(
+        token=config.TgBot.bot_token,
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+    )
 
     dp = Dispatcher(storage=storage)
 
@@ -61,7 +65,7 @@ async def main():
     dp.include_routers(...)
 
     dp.update.outer_middleware(ConfigMiddleware(config))
-    dp.update.outer_middleware(DbMiddleware())
+    dp.update.outer_middleware(DbMiddleware(database))
     dp.update.outer_middleware(ErrorMiddleware())
     await bot.set_my_commands(
         [

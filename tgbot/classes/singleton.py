@@ -1,4 +1,7 @@
-class Singleton:
+from abc import ABC, abstractmethod
+
+
+class SingletonFactory(ABC):
     _instance = None
 
     def __new__(cls, *args, **kwargs):
@@ -11,9 +14,12 @@ class Singleton:
             self._initialized = True
             self.init(*args, **kwargs)
 
+    @abstractmethod
     def init(self, *args, **kwargs):
-        # This method can be overridden by subclasses for their own initialization
-        pass
+        """
+        Subclasses must override this method for initialization.
+        """
+        raise NotImplementedError
 
 
 # example
