@@ -2,10 +2,9 @@ import os
 
 from dotenv import load_dotenv
 
-from tgbot.classes.singleton import Singleton
+from tgbot.classes import DynamicAttrsFactory, SingletonFactory
 
-
-class TgBotInfo(Singleton):
+class TgBotInfo(SingletonFactory, DynamicAttrsFactory):
     """
     Creates the TgBot object from environment variables.
     """
@@ -23,13 +22,27 @@ class TgBotInfo(Singleton):
             setattr(self, var_name.lower(), os.getenv(var_name))
 
 
-class DataBaseInfo(Singleton):
+class DataBaseInfo(SingletonFactory, DynamicAttrsFactory):
     data_to_import = [
         "DB_USER",
         "DB_PASSWORD",
         "DB_HOST",
         "DB_PORT",
         "DB_NAME",
+    ]
+
+    def init(self):
+        for var_name in self.data_to_import:
+            if not os.getenv(var_name):
+                raise ValueError(f"Environment variable '{var_name}' not set")
+            setattr(self, var_name.lower(), os.getenv(var_name))
+
+
+class WebhookInfo(SingletonFactory, DynamicAttrsFactory):
+    data_to_import = [
+        "WEB_SERVER_HOST",
+        "WEB_SERVER_PORT",
+        "WEBHOOK_PATH",
     ]
 
     def init(self):
@@ -48,7 +61,7 @@ class DataBaseInfo(Singleton):
 #             setattr(self, var_name.lower(), os.getenv(var_name))
 
 
-class Config(Singleton):
+class Config(SingletonFactory, DynamicAttrsFactory):
     """
     The main configuration class that integrates all the other configuration classes.
 
@@ -64,4 +77,5 @@ class Config(Singleton):
         load_dotenv(path)
         self.TgBot: TgBotInfo = TgBotInfo()
         self.DataBase: DataBaseInfo = DataBaseInfo()
+        self.Webhook: WebhookInfo = WebhookInfo()
         # self.admins = tuple(map(int, os.getenv("ADMINS").split(",")))
