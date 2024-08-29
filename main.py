@@ -1,16 +1,18 @@
 import asyncio
 import logging
+import os
 
 import betterlogging as bl
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, Redis, RedisStorage
 from aiogram.types import BotCommand
+
 # from aiogram.utils.i18n import ConstI18nMiddleware, I18n
 from aiogram_dialog import setup_dialogs
 
-from tgbot.config import load_config
-from tgbot.db.database import MyDb
+from tgbot.config import Config
+from tgbot.db.database import DB
 from tgbot.handlers import routers_list
 from tgbot.middlewares.config import ConfigMiddleware
 from tgbot.middlewares.db import DbMiddleware
@@ -19,49 +21,41 @@ from tgbot.middlewares.errors import ErrorMiddleware
 
 def setup_logging():
     log_level = logging.ERROR
-
-    # Initialize betterlogging for colorized console output
     bl.basic_colorized_config(level=logging.INFO)
-
-    # Create a logger
     logger = logging.getLogger(__name__)
     logger.setLevel(log_level)
-
-    # Remove any existing handlers to prevent duplicate logs
     if logger.hasHandlers():
         logger.handlers.clear()
-
-    # Create a file handler
     file_handler = logging.FileHandler(r"logging.txt")
     file_handler.setLevel(log_level)
     file_formatter = logging.Formatter(
         "%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s"
     )
     file_handler.setFormatter(file_formatter)
-
-    # Add the file handler to the logger
     logger.addHandler(file_handler)
-
-    # Console handler is already set up by betterlogging
-    # Add the logger to the root to catch all logs from all modules
     logging.getLogger().addHandler(file_handler)
-
     logging.error("Starting bot")
 
 
 async def main():
-    config = load_config(".env")
+    os.chdir(os.path.dirname(__file__))
+    config = Config(".env")
     setup_logging()
-    redis = Redis(host=config.tg_bot.redis_host, port=config.tg_bot.redis_port)
+    redis = Redis(host=config.TgBot.redis_host, port=config.TgBot.redis_port)
     storage = RedisStorage(redis, key_builder=DefaultKeyBuilder(with_destiny=True))
-
-    bot = Bot(token=config.tg_bot.token, parse_mode=ParseMode.HTML)
+    database = DB(
+        user=config.DataBase.db_user,
+        password=config.DataBase.db_password,
+        dbname=config.DataBase.db_name,
+        host=config.DataBase.db_host,
+        port=config.DataBase.db_port,
+    )
+    bot = Bot(token=config.TgBot.bot_token, parse_mode=ParseMode.HTML)
 
     dp = Dispatcher(storage=storage)
 
     # i18n = I18n(path="locales", default_locale="ru", domain="messages")
     # ConstI18nMiddleware(i18n=i18n, locale="ru").setup(dp)
-
 
     dp.include_routers(*routers_list)
     dp.include_routers(...)
@@ -74,7 +68,7 @@ async def main():
             BotCommand(command="/start", description="Start"),
         ]
     )
-    await MyDb().db_setup()
+    await database.create_tables()
     setup_dialogs(dp)
     await dp.start_polling(bot)
 

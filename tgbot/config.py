@@ -1,42 +1,54 @@
-from dataclasses import dataclass
-from typing import List
+import os
 
-from environs import Env
+from dotenv import load_dotenv
+
+from tgbot.classes.singleton import Singleton
 
 
-@dataclass
-class TgBot:
+class TgBotInfo(Singleton):
     """
     Creates the TgBot object from environment variables.
     """
 
-    token: str
-    redis_host: str
-    redis_port: int
-    group_id: int
-    admins_id: List[int]
+    data_to_import = [
+        "BOT_TOKEN",
+        "REDIS_HOST",
+        "REDIS_PORT",
+    ]
 
-    @staticmethod
-    def from_env(env: Env):
-        """
-        Creates the TgBot object from environment variables.
-        """
-        token = env.str("BOT_TOKEN")
-        group_id = env.int("GROUP_ID")
-        admins_id = env.list("ADMINS_ID")
-        redis_host = env.str("REDIS_HOST")
-        redis_port = env.int("REDIS_PORT")
-        return TgBot(
-            token=token,
-            group_id=group_id,
-            admins_id=list(map(int, admins_id)),
-            redis_host=redis_host,
-            redis_port=redis_port,
-        )
+    def init(self):
+        for var_name in self.data_to_import:
+            if not os.getenv(var_name):
+                raise ValueError(f"Environment variable '{var_name}' not set")
+            setattr(self, var_name.lower(), os.getenv(var_name))
 
 
-@dataclass
-class Config:
+class DataBaseInfo(Singleton):
+    data_to_import = [
+        "DB_USER",
+        "DB_PASSWORD",
+        "DB_HOST",
+        "DB_PORT",
+        "DB_NAME",
+    ]
+
+    def init(self):
+        for var_name in self.data_to_import:
+            if not os.getenv(var_name):
+                raise ValueError(f"Environment variable '{var_name}' not set")
+            setattr(self, var_name.lower(), os.getenv(var_name))
+
+
+# class BaseURL(Singleton):
+#     data_to_import = ["BASE_URL"]
+#     def init(self):
+#         for var_name in self.data_to_import:
+#             if not os.getenv(var_name):
+#                 raise ValueError(f"Environment variable '{var_name}' not set")
+#             setattr(self, var_name.lower(), os.getenv(var_name))
+
+
+class Config(Singleton):
     """
     The main configuration class that integrates all the other configuration classes.
 
@@ -48,22 +60,8 @@ class Config:
         Holds the settings related to the Telegram Bot.
     """
 
-    tg_bot: TgBot
-
-
-def load_config(path: str = None) -> Config:
-    """
-    This function takes an optional file path as input and returns a Config object.
-    :param path: The path of env file from where to load the configuration variables.
-    It reads environment variables from a .env file if provided, else from the process environment.
-    :return: Config object with attributes set as per environment variables.
-    """
-
-    # Create an Env object.
-    # The Env object will be used to read environment variables.
-    env = Env()
-    env.read_env(path=path)
-
-    return Config(
-        tg_bot=TgBot.from_env(env),
-    )
+    def init(self, path=None):
+        load_dotenv(path)
+        self.TgBot: TgBotInfo = TgBotInfo()
+        self.DataBase: DataBaseInfo = DataBaseInfo()
+        # self.admins = tuple(map(int, os.getenv("ADMINS").split(",")))
