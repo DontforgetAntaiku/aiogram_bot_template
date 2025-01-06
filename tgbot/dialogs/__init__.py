@@ -1,6 +1,12 @@
-from tgbot.dialogs.admin_statistics_dialog import admin_statistics_dialog as admin_statistics_dialog
-from tgbot.dialogs.getting_information_dialog import getting_information_dialog as getting_information_dialog
+from tgbot.dialogs.admin_statistics_dialog import (
+    admin_statistics_dialog as admin_statistics_dialog,
+)
+from tgbot.dialogs.getting_information_dialog import (
+    getting_information_dialog as getting_information_dialog,
+)
 from tgbot.dialogs.getting_link_dialog import getting_link_dialog as getting_link_dialog
-from tgbot.dialogs.new_coordinated_ad_dialog import new_coordinated_ad_dialog as new_coordinated_ad_dialog
+from tgbot.dialogs.new_coordinated_ad_dialog import (
+    new_coordinated_ad_dialog as new_coordinated_ad_dialog,
+)
 from tgbot.dialogs.new_note_dialog import new_note_dialog as new_note_dialog
 from tgbot.dialogs.statistics_dialog import statistics_dialog as statistics_dialog

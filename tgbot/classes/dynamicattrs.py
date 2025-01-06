@@ -14,7 +14,7 @@ class DynamicAttrsFactory(ABC):
     def _initialize_dynamic_attrs(cls):
         for var_name in cls.data_to_import:
             # Dynamically add type hints
-            var_name = var_name.lower()
+            var_name = var_name[0].lower()
             cls.__annotations__[var_name] = Optional[str]
             # Initialize attributes to None
             setattr(cls, var_name, None)
