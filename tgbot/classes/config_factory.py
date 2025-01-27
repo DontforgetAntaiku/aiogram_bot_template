@@ -16,7 +16,10 @@ class ConfigFactory(SingletonFactory, ABC):
             if not env_value and var_name not in self.nullable:
                 raise NoParameterError(f"Environment variable '{var_name}' not set")
             try:
-                setattr(self, var_name.lower(), var_type(env_value))
+                if var_type in (int, float, str):
+                    setattr(self, var_name.lower(), var_type(env_value))
+                else:
+                    setattr(self, var_name.lower(), var_type(env_value.split(",")))
             except ValueError:
                 raise InvalidEnvironmentError(
                     f"Environment variable '{var_name}' has an invalid value"

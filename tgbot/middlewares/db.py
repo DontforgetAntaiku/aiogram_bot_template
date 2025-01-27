@@ -9,7 +9,7 @@ from tgbot.db.database import DB
 class DbMiddleware(BaseMiddleware):
     def __init__(self, db: DB):
         super().__init__()
-        self.db = DB
+        self.db = db
 
     async def __call__(
         self,
