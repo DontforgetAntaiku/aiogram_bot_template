@@ -1,4 +1,4 @@
-import tgbot.classes.errors as Errors
+import errors as Errors
 
 from .config_factory import ConfigFactory
 from .dynamicattrs import DynamicAttrsFactory

@@ -1,8 +1,8 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 
-from tgbot.classes.singleton import SingletonFactory
-from tgbot.config import load_config
+from app.classes.singleton import SingletonFactory
+from app.config import load_config
 
 
 class IsAdmin(SingletonFactory, BaseFilter):
