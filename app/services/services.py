@@ -18,12 +18,6 @@ from app.site_functions.handlers.handlers import webhook
 
 
 class Services(SingletonFactory):
-    def init(self, bot: Bot, dp: Dispatcher, config: Config, database: DB):
-        self.bot: Bot = bot
-        self.dp: Dispatcher = dp
-        self.config: Config = config
-        self.database: DB = database
-
     def get_bot(config: Config):
         bot = Bot(
             token=config.TgBot.BOT_TOKEN,
@@ -66,7 +60,7 @@ class Services(SingletonFactory):
         logging.getLogger().addHandler(file_handler)
         logging.error("Starting bot")
 
-    def initialize_middlewares(dp: Dispatcher, config: Config):
+    def initialize_bot_middlewares(dp: Dispatcher, config: Config):
         dp.update.outer_middleware(ConfigMiddleware(config))
         dp.update.outer_middleware(ErrorMiddleware())
 
@@ -85,11 +79,11 @@ class Services(SingletonFactory):
             ]
         )
 
-    def setup_aiogram_dialogs(self):
+    def setup_aiogram_dialogs(dp):
         from aiogram_dialog import setup_dialogs
 
-        self.dp.include_routers()
-        setup_dialogs(self.dp)
+        dp.include_routers()
+        setup_dialogs(dp)
 
     async def on_shutdown(bot: Bot):
         await bot.delete_webhook(drop_pending_updates=True)

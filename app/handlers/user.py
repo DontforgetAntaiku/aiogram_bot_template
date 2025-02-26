@@ -14,4 +14,5 @@ async def user_start(message: Message):
         username=message.from_user.username,
         first_name=message.from_user.first_name,
     )
+    user
     await message.answer(message.html_text)

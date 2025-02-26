@@ -28,7 +28,7 @@ async def main():
     )
 
     dp.include_routers(*routers_list)
-    Services.initialize_middlewares(dp, config)
+    Services.initialize_bot_middlewares(dp, config)
     Services.add_routes(app, config)
     dp.startup.register(Services.on_startup)
     dp.shutdown.register(Services.on_shutdown)
