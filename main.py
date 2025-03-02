@@ -12,7 +12,7 @@ from app.services.services import Services
 from app.site_functions.middlewares.inject import InjectMiddleware
 
 
-async def main():
+def main():
     os.chdir(os.path.dirname(__file__))
     config = Config(".env")
     Services.setup_logging()
@@ -41,6 +41,6 @@ async def main():
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        main()
     except (KeyboardInterrupt, SystemExit):
         logging.error("Bot turned off")
