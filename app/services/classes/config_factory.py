@@ -1,26 +1,55 @@
 import os
+import typing
 from abc import ABC
 
 from .errors import InvalidEnvironmentError, NoParameterError
-from .singleton import SingletonFactory
 
 
-class ConfigFactory(SingletonFactory, ABC):
-    data_to_import = []
-    nullable = []
-
-    def init(self):
-        for item in self.data_to_import:
-            var_name, var_type = item if isinstance(item, tuple) else (item, str)
+class ConfigFactory(ABC):
+    def __init__(self):
+        for var_name, var_type in self.__annotations__.items():
             env_value = os.getenv(var_name, "")
-            if not env_value and var_name not in self.nullable:
+            is_optional = typing.get_origin(var_type) is typing.Optional
+            base_type = typing.get_args(var_type)[0] if is_optional else var_type
+
+            if not env_value:
+                if is_optional:
+                    setattr(self, var_name, None)
+                    continue
                 raise NoParameterError(f"Environment variable '{var_name}' not set")
+
             try:
-                if var_type in (int, float, str):
-                    setattr(self, var_name.lower(), var_type(env_value))
-                else:
-                    setattr(self, var_name.lower(), var_type(env_value.split(",")))
+                setattr(self, var_name, self._cast_value(env_value, base_type))
             except ValueError:
                 raise InvalidEnvironmentError(
                     f"Environment variable '{var_name}' has an invalid value"
                 )
+
+    def _cast_value(self, value: str, var_type: type):
+        if var_type is str:
+            return value
+        elif var_type is int:
+            return int(value)
+        elif var_type is bool:
+            return value.lower() in ("true", "1", "yes")
+        elif var_type in (list[int], tuple[int]):
+            return (
+                tuple(map(int, value.split(",")))
+                if var_type is tuple[int]
+                else list(map(int, value.split(",")))
+            )
+        elif var_type in (list[str], tuple[str]):
+            return (
+                tuple(value.split(",")) if var_type is tuple[str] else value.split(",")
+            )
+        elif var_type in (list[bool], tuple[bool]):
+            return (
+                tuple(
+                    map(lambda x: x.lower() in ("true", "1", "yes"), value.split(","))
+                )
+                if var_type is tuple[bool]
+                else list(
+                    map(lambda x: x.lower() in ("true", "1", "yes"), value.split(","))
+                )
+            )
+        raise TypeError(f"Unsupported type: {var_type}")

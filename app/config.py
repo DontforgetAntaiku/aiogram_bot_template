@@ -38,7 +38,6 @@ class Config(SingletonFactory):
             load_dotenv(path)
             for attr_name, factory_cls in self.__annotations__.items():
                 instance = factory_cls()
-                instance.init()
                 setattr(self, attr_name, instance)
         except EnvironmentError as E:
             logging.error(E)

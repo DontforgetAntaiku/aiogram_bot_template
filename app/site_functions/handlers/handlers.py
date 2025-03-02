@@ -3,7 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher, types
 from aiohttp import web
 
-from site_functions.middlewares.inject import inject
+from app.site_functions.middlewares.inject import inject
 from app.config import Config
 
 
