@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 
 from dotenv import load_dotenv
-
+from .services.classes.errors import EnvironmentError
 from app.services.classes import ConfigFactory, SingletonFactory
 
 
