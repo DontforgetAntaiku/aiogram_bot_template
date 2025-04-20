@@ -9,15 +9,19 @@ class ConfigFactory(ABC):
     def __init__(self):
         for var_name, var_type in self.__annotations__.items():
             env_value = os.getenv(var_name, "")
-            is_optional = typing.get_origin(var_type) is typing.Optional
-            base_type = typing.get_args(var_type)[0] if is_optional else var_type
 
-            if not env_value:
+            origin = typing.get_origin(var_type)
+            args = typing.get_args(var_type)
+            is_optional = origin is typing.Union and type(None) in args
+            if is_optional:
+                base_type = next(t for t in args if t is not type(None))
+            else:
+                base_type = var_type
+            if env_value == "":
                 if is_optional:
                     setattr(self, var_name, None)
                     continue
                 raise NoParameterError(f"Environment variable '{var_name}' not set")
-
             try:
                 setattr(self, var_name, self._cast_value(env_value, base_type))
             except ValueError:

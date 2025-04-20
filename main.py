@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import os
 
@@ -32,7 +31,7 @@ def main():
     Services.add_routes(app, config)
     dp.startup.register(Services.on_startup)
     dp.shutdown.register(Services.on_shutdown)
-    setup_application(app, dp, bot=bot, database=database)
+    setup_application(app, dp, bot=bot, database=database, config=config)
 
     web.run_app(
         app, host=config.Webhook.WEB_SERVER_HOST, port=config.Webhook.WEB_SERVER_PORT
