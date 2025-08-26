@@ -36,6 +36,7 @@ class WebhookInfo(ConfigFactory):
     X_Telegram_Bot_Api_Secret_Token: str
 
 
+
 class Config(SingletonFactory):
     bot: BotInfo
     redis: RedisInfo
@@ -60,8 +61,10 @@ class Config(SingletonFactory):
         params = []
         for attr_name, factory_cls in self.__annotations__.items():
             params.append(f"# {attr_name}")
+            if not hasattr(factory_cls, '__prefix__'):
+                setattr(factory_cls, '__prefix__', factory_cls)
             for var_name in factory_cls.__annotations__.keys():
-                params.append(f"{var_name}=")
+                params.append(f"{factory_cls.__prefix__ + var_name}=")
         with open(".env.example", "w") as file:
             file.write("\n".join(params))
         print("Created .env.example file")

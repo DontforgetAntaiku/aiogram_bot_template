@@ -7,8 +7,10 @@ from .errors import InvalidEnvironmentError, NoParameterError
 
 class ConfigFactory(ABC):
     def __init__(self):
+        if not hasattr(self, '__prefix__'):
+            self.__prefix__ = self.__class__
         for var_name, var_type in self.__annotations__.items():
-            env_value = os.getenv(var_name, "")
+            env_value = os.getenv(self.__prefix__ + var_name, "")
 
             origin = typing.get_origin(var_type)
             args = typing.get_args(var_type)
@@ -26,7 +28,7 @@ class ConfigFactory(ABC):
                 setattr(self, var_name, self._cast_value(env_value, base_type))
             except ValueError:
                 raise InvalidEnvironmentError(
-                    f"Environment variable '{var_name}' has an invalid value"
+                    f"Environment variable '{self.__prefix__ + var_name}' has an invalid value"
                 )
 
     def _cast_value(self, value: str, var_type: type):
