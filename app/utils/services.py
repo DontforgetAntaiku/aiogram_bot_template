@@ -38,8 +38,8 @@ class Services(SingletonFactory):
 
     def setup_logging():
         log_level = logging.ERROR
-        log_format = "[%(asctime)s] %(levelname)s:%(filename)s:%(lineno)d:%(message)s"
-        bl.basic_colorized_config(fmt=log_format, level=log_level)
+        log_format = "[%(asctime)s] %(levelname)s:(%(filename)s): %(lineno)d:%(message)s"
+        bl.basic_colorized_config(format=log_format, style='%', level=log_level)
         logger = logging.getLogger(__name__)
         logger.setLevel(log_level)
         if logger.hasHandlers():
@@ -77,8 +77,11 @@ class Services(SingletonFactory):
         dp.include_routers()
         setup_dialogs(dp)
 
-    async def on_shutdown(bot: Bot):
+    async def on_shutdown(bot: Bot, database: DB):
+        
+        await database.close_db()
         await bot.delete_webhook(drop_pending_updates=True)
+
 
     def add_routes(app: web.Application, config: Config):
         app.router.add_post(config.webhook.PATH, webhook)

@@ -1,4 +1,3 @@
-import logging
 import os
 
 from aiogram import Dispatcher
@@ -7,8 +6,8 @@ from aiohttp import web
 
 from app.config import Config
 from app.handlers import routers_list
-from app.utils.services import Services
 from app.site_functions.middlewares.inject import InjectMiddleware
+from app.utils.services import Services
 
 
 def main():
@@ -18,7 +17,7 @@ def main():
     redis = Services.get_redis(config)
     storage = Services.get_storage(redis)
     bot = Services.get_bot(config)
-    database = Services.get_database(config)
+    database = Services.get_database()
     dp = Dispatcher(storage=storage)
     app = web.Application(
         middlewares=[
@@ -39,7 +38,4 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except (KeyboardInterrupt, SystemExit):
-        logging.error("Bot turned off")
+    main()

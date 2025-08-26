@@ -2,6 +2,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux,database,dbeaver,dotenv,git,macos,pycharm+all,python,venv,virtualenv,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,linux,database,dbeaver,dotenv,git,macos,pycharm+all,python,venv,virtualenv,windows
 
+
+### Logging ###
+logging.txt 
+
+
 ### Database ###
 *.accdb
 *.db
@@ -11,6 +16,8 @@
 *.sqlite3
 *.db-shm
 *.db-wal
+**/migrations/
+pyproject.toml
 
 ### DBeaver ###
 # ide config file

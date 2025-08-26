@@ -1,4 +1,7 @@
-from tortoise import Tortoise, run_async
+import logging
+
+from tortoise import Tortoise, run_async, connections
+from tortoise.exceptions import OperationalError
 
 from app.config import Config
 from app.utils.classes import SingletonFactory
@@ -31,13 +34,19 @@ class DB(SingletonFactory):
         run_async(self.init_db())
 
     async def init_db(self):
-        await Tortoise.init(
-            config=TORTOISE_ORM
-        )
+        try:
+            await Tortoise.init(
+                config=TORTOISE_ORM,
+                _create_db=True
+            )
+        except OperationalError as E:
+            logging.error(E)
+            await Tortoise.init(
+                config=TORTOISE_ORM)
         await Tortoise.generate_schemas()
 
     async def close_db(self):
-        await Tortoise.close_connections()
+        await connections.close_all()
 
 
 
