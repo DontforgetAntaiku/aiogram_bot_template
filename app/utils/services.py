@@ -10,7 +10,7 @@ from aiohttp import web
 from redis.asyncio import Redis
 
 from app.config import Config
-from app.db.database import DB
+from app.database import DB
 from app.middlewares.config import ConfigMiddleware
 from app.middlewares.errors import ErrorMiddleware
 from app.services.classes import SingletonFactory
@@ -20,23 +20,16 @@ from app.site_functions.handlers.handlers import webhook
 class Services(SingletonFactory):
     def get_bot(config: Config):
         bot = Bot(
-            token=config.TgBot.BOT_TOKEN,
+            token=config.bot.TOKEN,
             default=DefaultBotProperties(parse_mode=ParseMode.HTML),
         )
         return bot
 
-    def get_database(config: Config):
-        database = DB(
-            user=config.DataBase.DB_USER,
-            password=config.DataBase.DB_PASSWORD,
-            dbname=config.DataBase.DB_NAME,
-            host=config.DataBase.DB_HOST,
-            port=config.DataBase.DB_PORT,
-        )
-        return database
+    def get_database():
+        return DB()
 
     def get_redis(config: Config):
-        redis = Redis(host=config.TgBot.REDIS_HOST, port=config.TgBot.REDIS_PORT)
+        redis = Redis(host=config.redis.HOST, port=config.redis.PORT)
         return redis
 
     def get_storage(redis: Redis):
@@ -67,8 +60,8 @@ class Services(SingletonFactory):
     async def on_startup(bot: Bot, config: Config) -> None:
         print(f"https://t.me/{(await bot.get_me()).username}")
         await bot.set_webhook(
-            f"{config.Webhook.BASE_URL}{config.Webhook.WEBHOOK_PATH}",
-            secret_token=config.Webhook.X_Telegram_Bot_Api_Secret_Token,
+            f"{config.webhook.BASE_URL}{config.webhook.PATH}",
+            secret_token=config.webhook.X_Telegram_Bot_Api_Secret_Token,
             allowed_updates=[],
         )
 
@@ -79,7 +72,7 @@ class Services(SingletonFactory):
             ]
         )
 
-    def setup_aiogram_dialogs(dp):
+    def setup_aiogram_dialogs(dp: Dispatcher):
         from aiogram_dialog import setup_dialogs
 
         dp.include_routers()
@@ -89,4 +82,4 @@ class Services(SingletonFactory):
         await bot.delete_webhook(drop_pending_updates=True)
 
     def add_routes(app: web.Application, config: Config):
-        app.router.add_post(config.Webhook.WEBHOOK_PATH, webhook)
+        app.router.add_post(config.webhook.PATH, webhook)

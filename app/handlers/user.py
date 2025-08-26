@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 
-from app.db.models import User
+from app.database.models import User
 
 user_router = Router()
 

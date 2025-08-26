@@ -14,7 +14,7 @@ async def webhook(request: web.Request, bot: Bot, dp: Dispatcher, config: Config
         update = types.Update(**data)
         if (
             request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-            == config.Webhook.X_Telegram_Bot_Api_Secret_Token
+            == config.webhook.X_Telegram_Bot_Api_Secret_Token
         ):
             await dp.feed_update(bot=bot, update=update)
         return web.Response(text="OK")

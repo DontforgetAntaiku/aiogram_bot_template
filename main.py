@@ -34,7 +34,7 @@ def main():
     setup_application(app, dp, bot=bot, database=database, config=config)
 
     web.run_app(
-        app, host=config.Webhook.WEB_SERVER_HOST, port=config.Webhook.WEB_SERVER_PORT
+        app, host=config.webhook.HOST, port=config.webhook.PORT
     )
 
 
