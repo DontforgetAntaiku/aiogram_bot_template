@@ -3,9 +3,9 @@ from typing import Optional
 
 from dotenv import load_dotenv
 
-from app.services.classes import ConfigFactory, SingletonFactory
+from .utils.classes import ConfigFactory, SingletonFactory
 
-from .services.classes.errors import EnvironmentError
+from .utils.classes.errors import EnvironmentError
 
 
 class BotInfo(ConfigFactory):

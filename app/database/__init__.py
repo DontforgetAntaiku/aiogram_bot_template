@@ -1,7 +1,7 @@
 from tortoise import Tortoise, run_async
 
 from app.config import Config
-from app.services.classes import SingletonFactory
+from app.utils.classes import SingletonFactory
 
 config = Config()
 

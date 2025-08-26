@@ -13,8 +13,8 @@ from app.config import Config
 from app.database import DB
 from app.middlewares.config import ConfigMiddleware
 from app.middlewares.errors import ErrorMiddleware
-from app.services.classes import SingletonFactory
 from app.site_functions.handlers.handlers import webhook
+from app.utils.classes import SingletonFactory
 
 
 class Services(SingletonFactory):
@@ -38,16 +38,15 @@ class Services(SingletonFactory):
 
     def setup_logging():
         log_level = logging.ERROR
-        bl.basic_colorized_config(level=logging.INFO)
+        log_format = "[%(asctime)s] %(levelname)s:%(filename)s:%(lineno)d:%(message)s"
+        bl.basic_colorized_config(fmt=log_format, level=log_level)
         logger = logging.getLogger(__name__)
         logger.setLevel(log_level)
         if logger.hasHandlers():
             logger.handlers.clear()
         file_handler = logging.FileHandler(r"logging.txt")
         file_handler.setLevel(log_level)
-        file_formatter = logging.Formatter(
-            "%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s"
-        )
+        file_formatter = logging.Formatter(log_format)
         file_handler.setFormatter(file_formatter)
         logger.addHandler(file_handler)
         logging.getLogger().addHandler(file_handler)

@@ -1,4 +1,4 @@
-from app.services.classes import errors as Errors
+from app.utils.classes import errors as Errors
 
 from .config_factory import ConfigFactory
 from .dynamicattrs import DynamicAttrsFactory

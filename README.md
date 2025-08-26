@@ -38,24 +38,25 @@ A starter template for building Telegram bots using the Aiogram framework. This 
    cp .env.example .env
    ```
 2. Set the required variables in `.env`:
-  ```dotenv
-  # TgBot
-  BOT_TOKEN=
-  REDIS_HOST=
-  REDIS_PORT=
-  # DataBase
-  DB_USER=
-  DB_PASSWORD=
-  DB_HOST=
-  DB_PORT=
-  DB_NAME=
-  # Webhook
-  WEB_SERVER_HOST=
-  WEB_SERVER_PORT=
-  WEBHOOK_PATH=
-  BASE_URL=
-  X_Telegram_Bot_Api_Secret_Token=
-  ```
+   ```dotenv
+   # bot
+   TOKEN=
+   # redis
+   HOST=
+   PORT=
+   # database
+   USER=
+   PASSWORD=
+   HOST=
+   PORT=
+   NAME=
+   # webhook
+   WEB_SERVER_HOST=
+   WEB_SERVER_PORT=
+   WEBHOOK_PATH=
+   BASE_URL=
+   X_Telegram_Bot_Api_Secret_Token=
+   ```
 
 ## Usage
 
@@ -72,41 +73,42 @@ A starter template for building Telegram bots using the Aiogram framework. This 
 ## Project Structure
 
 ```
-aiogram_bot_template/
-├── app/
+aiogram_bot_template
+├── app
 │   ├── config.py
-│   ├── db/
-│   │   ├── database.py
+│   ├── database
+│   │   ├── __init__.py
 │   │   └── models.py
-│   ├── dialogs/
-│   │   ├── admin/
+│   ├── dialogs
+│   │   ├── admin
 │   │   ├── states.py
-│   │   └── user/
-│   ├── filters/
+│   │   └── user
+│   ├── filters
 │   │   └── filters.py
-│   ├── handlers/
+│   ├── handlers
 │   │   ├── __init__.py
 │   │   └── user.py
-│   ├── keyboards/
+│   ├── keyboards
 │   │   ├── inline.py
 │   │   └── reply.py
-│   ├── middlewares/
+│   ├── middlewares
 │   │   ├── config.py
 │   │   └── errors.py
-│   ├── services/
-│   │   ├── classes/
-│   │   │   ├── config_factory.py
-│   │   │   ├── dynamicattrs.py
-│   │   │   ├── errors.py
-│   │   │   ├── __init__.py
-│   │   │   └── singleton.py
-│   │   └── services.py
-│   └── site_functions/
-│       ├── handlers/
-│       │   └── handlers.py
-│       └── middlewares/
-│           └── inject.py
+│   ├── site_functions
+│   │   ├── handlers
+│   │   │   └── handlers.py
+│   │   └── middlewares
+│   │       └── inject.py
+│   └── utils
+│       ├── classes
+│       │   ├── config_factory.py
+│       │   ├── dynamicattrs.py
+│       │   ├── errors.py
+│       │   ├── __init__.py
+│       │   └── singleton.py
+│       └── services.py
 ├── main.py
+├── README.md
 └── requirements.txt
 ```
 

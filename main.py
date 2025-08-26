@@ -7,7 +7,7 @@ from aiohttp import web
 
 from app.config import Config
 from app.handlers import routers_list
-from app.services.services import Services
+from app.utils.services import Services
 from app.site_functions.middlewares.inject import InjectMiddleware
 
 

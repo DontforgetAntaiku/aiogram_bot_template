@@ -19,4 +19,4 @@ class ErrorMiddleware(BaseMiddleware):
             return await handler(event, data)
         except Exception as e:
             logging.error(e)
-            return await handler(event, data)
+            return False
