@@ -40,22 +40,22 @@ A starter template for building Telegram bots using the Aiogram framework. This 
 2. Set the required variables in `.env`:
    ```dotenv
    # bot
-   TOKEN=
+   BOT_TOKEN=
    # redis
-   HOST=
-   PORT=
+   REDIS_HOST=
+   REDIS_PORT=
    # database
-   USER=
-   PASSWORD=
-   HOST=
-   PORT=
-   NAME=
+   DB_USER=
+   DB_PASSWORD=
+   DB_HOST=
+   DB_PORT=
+   DB_NAME=
    # webhook
-   WEB_SERVER_HOST=
-   WEB_SERVER_PORT=
+   WEBHOOK_HOST=
+   WEBHOOK_PORT=
    WEBHOOK_PATH=
-   BASE_URL=
-   X_Telegram_Bot_Api_Secret_Token=
+   WEBHOOK_BASE_URL=
+   WEBHOOK_X_Telegram_Bot_Api_Secret_Token=
    ```
 
 ## Usage

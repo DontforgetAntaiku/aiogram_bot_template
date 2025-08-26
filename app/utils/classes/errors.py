@@ -1,11 +1,11 @@
-class EnvironmentError(Exception):
+class EnvironmentFileError(Exception):
     def __init__(self, message):
         self.message = message
 
 
-class NoParameterError(EnvironmentError):
+class NoParameterError(EnvironmentFileError):
     pass
 
 
-class InvalidEnvironmentError(EnvironmentError):
+class InvalidEnvironmentError(EnvironmentFileError):
     pass
