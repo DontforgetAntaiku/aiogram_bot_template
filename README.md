@@ -75,39 +75,48 @@ A starter template for building Telegram bots using the Aiogram framework. This 
 ```
 aiogram_bot_template
 ├── app
-│   ├── config.py
+│   ├── bot
+│   │   ├── dialogs
+│   │   │   ├── admin
+│   │   │   ├── states.py
+│   │   │   └── user
+│   │   ├── filters
+│   │   │   └── filters.py
+│   │   ├── handlers
+│   │   │   ├── __init__.py
+│   │   │   └── user.py
+│   │   └── keyboards
+│   │       ├── inline.py
+│   │       └── reply.py
+│   ├── core
+│   │   └── __init__.py
 │   ├── database
 │   │   ├── __init__.py
 │   │   └── models.py
-│   ├── dialogs
-│   │   ├── admin
-│   │   ├── states.py
-│   │   └── user
-│   ├── filters
-│   │   └── filters.py
-│   ├── handlers
-│   │   ├── __init__.py
-│   │   └── user.py
-│   ├── keyboards
-│   │   ├── inline.py
-│   │   └── reply.py
-│   ├── middlewares
-│   │   ├── config.py
-│   │   └── errors.py
-│   ├── site_functions
-│   │   ├── handlers
-│   │   │   └── handlers.py
-│   │   └── middlewares
-│   │       └── inject.py
+│   ├── site
+│   │   └── routers
+│   │       └── main
+│   │           └── view.py
 │   └── utils
 │       ├── classes
 │       │   ├── config_factory.py
+│       │   ├── config.py
 │       │   ├── dynamicattrs.py
-│       │   ├── errors.py
 │       │   ├── __init__.py
-│       │   └── singleton.py
-│       └── services.py
+│       │   └── services.py
+│       ├── exceptions
+│       │   └── __init__.py
+│       └── middlewares
+│           ├── bot
+│           │   ├── errors.py
+│           │   └── __init__.py
+│           └── site
+│               ├── __init__.py
+│               └── inject.py
 ├── main.py
+├── migrations
+│   └── models
+├── pyproject.toml
 ├── README.md
 └── requirements.txt
 ```

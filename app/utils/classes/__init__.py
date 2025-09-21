@@ -1,12 +1,8 @@
-from app.utils.classes import errors as Errors
+from app.utils import exceptions as Errors
 
+from .config import Config
 from .config_factory import ConfigFactory
 from .dynamicattrs import DynamicAttrsFactory
-from .singleton import SingletonFactory
+from .services import Services
 
-__all__ = [
-    "DynamicAttrsFactory",
-    "SingletonFactory",
-    "Errors",
-    "ConfigFactory",
-]
+__all__ = ("DynamicAttrsFactory", "Errors", "ConfigFactory", "Config", "Services")

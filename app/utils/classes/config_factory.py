@@ -2,12 +2,12 @@ import os
 import typing
 from abc import ABC
 
-from .errors import InvalidEnvironmentError, NoParameterError
+from ..exceptions import InvalidEnvironmentError, NoParameterError
 
 
 class ConfigFactory(ABC):
     def __init__(self):
-        if not hasattr(self, '__prefix__'):
+        if not hasattr(self, "__prefix__"):
             self.__prefix__ = self.__qualname__
         for var_name, var_type in self.__annotations__.items():
             env_value = os.getenv(self.__prefix__ + var_name, "")
@@ -23,7 +23,9 @@ class ConfigFactory(ABC):
                 if is_optional:
                     setattr(self, var_name, None)
                     continue
-                raise NoParameterError(f"Environment variable '{self.__prefix__ + var_name}' not set")
+                raise NoParameterError(
+                    f"Environment variable '{self.__prefix__ + var_name}' not set"
+                )
             try:
                 setattr(self, var_name, self._cast_value(env_value, base_type))
             except ValueError:

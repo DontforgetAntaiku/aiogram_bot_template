@@ -2,32 +2,17 @@ import logging
 
 import betterlogging as bl
 from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from aiogram.types import BotCommand
 from aiohttp import web
 from redis.asyncio import Redis
 
-from app.config import Config
-from app.database import DB
-from app.middlewares.config import ConfigMiddleware
-from app.middlewares.errors import ErrorMiddleware
-from app.site_functions.handlers.handlers import webhook
-from app.utils.classes import SingletonFactory
+from app.site.routers.main.view import webhook
+from app.utils.classes.config import Config
+from app.utils.middlewares.bot.errors import ErrorMiddleware
 
 
-class Services(SingletonFactory):
-    def get_bot(config: Config):
-        bot = Bot(
-            token=config.bot.TOKEN,
-            default=DefaultBotProperties(parse_mode=ParseMode.HTML),
-        )
-        return bot
-
-    def get_database():
-        return DB()
-
+class Services:
     def get_redis(config: Config):
         redis = Redis(host=config.redis.HOST, port=config.redis.PORT)
         return redis
@@ -38,22 +23,23 @@ class Services(SingletonFactory):
 
     def setup_logging():
         log_level = logging.ERROR
-        log_format = "[%(asctime)s] %(levelname)s:(%(filename)s): %(lineno)d:%(message)s"
-        bl.basic_colorized_config(format=log_format, style='%', level=log_level)
-        logger = logging.getLogger(__name__)
-        logger.setLevel(log_level)
-        if logger.hasHandlers():
-            logger.handlers.clear()
-        file_handler = logging.FileHandler(r"logging.txt")
-        file_handler.setLevel(log_level)
-        file_formatter = logging.Formatter(log_format)
-        file_handler.setFormatter(file_formatter)
-        logger.addHandler(file_handler)
-        logging.getLogger().addHandler(file_handler)
+        log_format = (
+            "[%(asctime)s] %(levelname)s:(%(filename)s): %(lineno)d:%(message)s"
+        )
+        bl.basic_colorized_config(format=log_format, style="%", level=log_level)
+        # logger = logging.getLogger(__name__)
+        # logger.setLevel(log_level)
+        # if logger.hasHandlers():
+        #     logger.handlers.clear()
+        # file_handler = logging.FileHandler(r"logging.txt")
+        # file_handler.setLevel(log_level)
+        # file_formatter = logging.Formatter(log_format)
+        # file_handler.setFormatter(file_formatter)
+        # logger.addHandler(file_handler)
+        # logging.getLogger().addHandler(file_handler)
         logging.error("Starting bot")
 
     def initialize_bot_middlewares(dp: Dispatcher, config: Config):
-        dp.update.outer_middleware(ConfigMiddleware(config))
         dp.update.outer_middleware(ErrorMiddleware())
 
     async def on_startup(bot: Bot, config: Config) -> None:
@@ -77,11 +63,8 @@ class Services(SingletonFactory):
         dp.include_routers()
         setup_dialogs(dp)
 
-    async def on_shutdown(bot: Bot, database: DB):
-        
-        await database.close_db()
+    async def on_shutdown(bot: Bot):
         await bot.delete_webhook(drop_pending_updates=True)
-
 
     def add_routes(app: web.Application, config: Config):
         app.router.add_post(config.webhook.PATH, webhook)

@@ -1,19 +1,11 @@
-import logging
-
-from tortoise import Tortoise, run_async, connections
-from tortoise.exceptions import OperationalError
-
-from app.config import Config
-from app.utils.classes import SingletonFactory
-
-config = Config()
+from app.core import CONFIG
 
 user, password, host, port, dbname = (
-    config.database.USER,
-    config.database.PASSWORD,
-    config.database.HOST,
-    config.database.PORT,
-    config.database.NAME,
+    CONFIG.database.USER,
+    CONFIG.database.PASSWORD,
+    CONFIG.database.HOST,
+    CONFIG.database.PORT,
+    CONFIG.database.NAME,
 )
 
 
@@ -29,25 +21,5 @@ TORTOISE_ORM = {
     "_create_db": True,
 }
 
-class DB(SingletonFactory):
-    def init(self):
-        run_async(self.init_db())
 
-    async def init_db(self):
-        try:
-            await Tortoise.init(
-                config=TORTOISE_ORM,
-                _create_db=True
-            )
-        except OperationalError as E:
-            logging.error(E)
-            await Tortoise.init(
-                config=TORTOISE_ORM)
-        await Tortoise.generate_schemas()
-
-    async def close_db(self):
-        await connections.close_all()
-
-
-
-__all__ = ['TORTOISE_ORM', 'DB']
+__all__ = ("TORTOISE_ORM",)

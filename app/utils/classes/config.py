@@ -3,9 +3,9 @@ from typing import Optional
 
 from dotenv import load_dotenv
 
-from .utils.classes import ConfigFactory, SingletonFactory
+from .config_factory import ConfigFactory
 
-from .utils.classes.errors import EnvironmentFileError
+from ..exceptions import EnvironmentFileError
 
 
 class BotInfo(ConfigFactory):
@@ -18,6 +18,7 @@ class RedisInfo(ConfigFactory):
     HOST: str
     PORT: int
 
+
 class DatabaseInfo(ConfigFactory):
     __prefix__ = "DB_"
     USER: str
@@ -28,7 +29,7 @@ class DatabaseInfo(ConfigFactory):
 
 
 class WebhookInfo(ConfigFactory):
-    __prefix__ = 'WEBHOOK_'
+    __prefix__ = "WEBHOOK_"
     HOST: str
     PORT: int
     PATH: str
@@ -36,13 +37,13 @@ class WebhookInfo(ConfigFactory):
     X_Telegram_Bot_Api_Secret_Token: str
 
 
-class Config(SingletonFactory):
+class Config:
     bot: BotInfo
     redis: RedisInfo
     database: DatabaseInfo
     webhook: WebhookInfo
 
-    def init(self, path: Optional[str] = None):
+    def __init__(self, path: Optional[str] = None):
         try:
             load_dotenv(path)
             for attr_name, factory_cls in self.__annotations__.items():
@@ -52,16 +53,18 @@ class Config(SingletonFactory):
             logging.error(E)
             self.create_example_env()
             raise E
+    
 
-    def create_example_env(self):
+    @staticmethod
+    def create_example_env():
         """
         Creates an example.env file with placeholder values.
         """
         params = []
-        for attr_name, factory_cls in self.__annotations__.items():
+        for attr_name, factory_cls in Config.__annotations__.items():
             params.append(f"# {attr_name}")
-            if not hasattr(factory_cls, '__prefix__'):
-                setattr(factory_cls, '__prefix__', self.__qualname__)
+            if not hasattr(factory_cls, "__prefix__"):
+                setattr(factory_cls, "__prefix__", Config.__qualname__)
             for var_name in factory_cls.__annotations__.keys():
                 params.append(f"{factory_cls.__prefix__ + var_name}=")
         with open(".env.example", "w") as file:

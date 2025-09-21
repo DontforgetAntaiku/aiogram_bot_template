@@ -1,40 +1,34 @@
 import os
 
-from aiogram import Dispatcher
 from aiogram.webhook.aiohttp_server import setup_application
 from aiohttp import web
+from tortoise.contrib.aiohttp import register_tortoise
 
-from app.config import Config
-from app.handlers import routers_list
-from app.site_functions.middlewares.inject import InjectMiddleware
-from app.utils.services import Services
+from app.bot.handlers import BOT_ROUTERS_LIST
+from app.core import BOT, CONFIG, DISPATCHER, WORK_DIR
+from app.database import TORTOISE_ORM
+from app.utils.classes import Services
+from app.utils.middlewares.site.inject import InjectMiddleware
 
 
 def main():
-    os.chdir(os.path.dirname(__file__))
-    config = Config(".env")
     Services.setup_logging()
-    redis = Services.get_redis(config)
-    storage = Services.get_storage(redis)
-    bot = Services.get_bot(config)
-    database = Services.get_database()
-    dp = Dispatcher(storage=storage)
+
+    os.chdir(WORK_DIR)
     app = web.Application(
         middlewares=[
-            InjectMiddleware(config=config, bot=bot, dp=dp),
+            InjectMiddleware(config=CONFIG, bot=BOT, dp=DISPATCHER),
         ]
     )
+    DISPATCHER.include_routers(*BOT_ROUTERS_LIST)
+    Services.initialize_bot_middlewares(DISPATCHER, CONFIG)
+    DISPATCHER.startup.register(Services.on_startup)
+    DISPATCHER.shutdown.register(Services.on_shutdown)
+    setup_application(app, DISPATCHER, bot=BOT, config=CONFIG)
+    Services.add_routes(app, CONFIG)
+    register_tortoise(app, TORTOISE_ORM, generate_schemas=True)
 
-    dp.include_routers(*routers_list)
-    Services.initialize_bot_middlewares(dp, config)
-    Services.add_routes(app, config)
-    dp.startup.register(Services.on_startup)
-    dp.shutdown.register(Services.on_shutdown)
-    setup_application(app, dp, bot=bot, database=database, config=config)
-
-    web.run_app(
-        app, host=config.webhook.HOST, port=config.webhook.PORT
-    )
+    web.run_app(app, host=CONFIG.webhook.HOST, port=CONFIG.webhook.PORT)
 
 
 if __name__ == "__main__":
