@@ -17,7 +17,6 @@ logging.txt
 *.db-shm
 *.db-wal
 **/migrations/
-pyproject.toml
 
 ### DBeaver ###
 # ide config file
