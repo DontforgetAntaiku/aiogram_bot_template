@@ -9,8 +9,10 @@ user_router = Router()
 
 @user_router.message(CommandStart())
 async def user_start(message: Message):
+    if message.from_user is None:
+        return
     await User.update_or_create(
-        dict(
+        defaults=dict(
             id=message.from_user.id,
             username=message.from_user.username,
             first_name=message.from_user.first_name,

@@ -8,6 +8,7 @@ from aiogram.enums import ParseMode
 
 from app.utils.classes.config import Config
 from app.utils.classes.services import Services
+
 LOG_LEVEL: Final[int] = logging.ERROR
 
 WORK_DIR: Final[str] = os.path.dirname(__file__)
@@ -22,3 +23,11 @@ BOT = Bot(
 DISPATCHER = Dispatcher(
     storage=REDIS_STORAGE,
 )
+
+try:
+    from aiogram_dialog import BgManagerFactory, setup_dialogs
+
+    BG_FACTORY: BgManagerFactory = setup_dialogs(DISPATCHER)
+except Exception:
+    pass
+

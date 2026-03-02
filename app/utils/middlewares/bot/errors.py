@@ -1,4 +1,5 @@
 import logging
+import traceback
 from typing import Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
@@ -17,6 +18,6 @@ class ErrorMiddleware(BaseMiddleware):
     ) -> Any:
         try:
             return await handler(event, data)
-        except Exception as e:
-            logging.error(e)
+        except Exception:
+            logging.error(traceback.format_exc())
             return False

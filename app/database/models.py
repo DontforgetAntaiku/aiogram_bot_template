@@ -8,5 +8,5 @@ class User(Model):
     first_name = fields.CharField(max_length=255, null=False)
     created_at = fields.DatetimeField(auto_now_add=True)
 
-    class Meta:
+    class Meta:  # pyright: ignore
         table = "users"

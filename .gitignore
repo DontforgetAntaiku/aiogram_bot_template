@@ -17,7 +17,6 @@ logging.txt
 *.db-shm
 *.db-wal
 **/migrations/
-pyproject.toml
 
 ### DBeaver ###
 # ide config file
@@ -419,3 +418,4 @@ $RECYCLE.BIN/
 */.ruff
 */ruff
 */ruff_cache
+.python-version
