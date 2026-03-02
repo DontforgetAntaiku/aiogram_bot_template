@@ -15,7 +15,7 @@ A starter template for building Telegram bots using the Aiogram framework with w
 
 ## Requirements
 
-- Python 3.9 or higher
+- Python 3.13 or higher
 - PostgreSQL
 - Redis
 - Git

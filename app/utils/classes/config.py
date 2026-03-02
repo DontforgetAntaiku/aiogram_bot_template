@@ -3,9 +3,8 @@ from typing import Optional
 
 from dotenv import load_dotenv
 
-from .config_factory import ConfigFactory
-
 from ..exceptions import EnvironmentFileError
+from .config_factory import ConfigFactory
 
 
 class BotInfo(ConfigFactory):
@@ -53,7 +52,6 @@ class Config:
             logging.error(E)
             self.create_example_env()
             raise E
-    
 
     @staticmethod
     def create_example_env():

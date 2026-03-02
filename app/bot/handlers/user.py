@@ -1,22 +1,10 @@
-from aiogram import Router
-from aiogram.filters import CommandStart
-from aiogram.types import Message
-
-from app.database.models import User
+from aiogram import Router, filters, types
+from aiogram.utils.i18n import gettext as _
+from aiogram.utils.i18n import lazy_gettext as __
 
 user_router = Router()
 
 
-@user_router.message(CommandStart())
-async def user_start(message: Message):
-    if message.from_user is None:
-        return
-    await User.update_or_create(
-        defaults=dict(
-            id=message.from_user.id,
-            username=message.from_user.username,
-            first_name=message.from_user.first_name,
-        ),
-        id=message.from_user.id,
-    )
-    await message.answer(message.html_text)
+@user_router.message(filters.CommandStart())
+async def user_start(message: types.Message):
+    await message.answer(_("welcome_text"))

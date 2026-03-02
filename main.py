@@ -5,9 +5,9 @@ from aiohttp.web import Application, run_app
 from tortoise.contrib.aiohttp import register_tortoise
 
 from app.bot.handlers import BOT_ROUTERS_LIST
-from app.core import BOT, CONFIG, DISPATCHER, WORK_DIR
+from app.core import BOT, CONFIG, DISPATCHER, I18N, WORK_DIR
 from app.database import TORTOISE_ORM
-from app.utils.classes import Services
+from app.utils.classes.services import Services
 from app.utils.middlewares.site.inject import InjectMiddleware
 
 
@@ -21,7 +21,7 @@ def main():
         )
     )
     DISPATCHER.include_routers(*BOT_ROUTERS_LIST)
-    Services.initialize_bot_middlewares(DISPATCHER, CONFIG)
+    Services.initialize_bot_middlewares(DISPATCHER, I18N)
     DISPATCHER.startup.register(Services.on_startup)
     DISPATCHER.shutdown.register(Services.on_shutdown)
     SimpleRequestHandler(

@@ -5,12 +5,14 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.base import DefaultKeyBuilder
 from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import BotCommand
+from aiogram.utils.i18n import I18n
 from aiohttp import web
 from redis.asyncio import Redis
 
 from app.site.routers.main.view import webhook
 from app.utils.classes.config import Config
 from app.utils.middlewares.bot.errors import ErrorMiddleware
+from app.utils.middlewares.bot.i18n import I18NMiddleware
 
 
 class Services:
@@ -33,7 +35,8 @@ class Services:
         logging.info("Starting bot")
 
     @staticmethod
-    def initialize_bot_middlewares(dp: Dispatcher, config: Config):
+    def initialize_bot_middlewares(dp: Dispatcher, i18n: I18n):
+        I18NMiddleware(i18n).setup(dp)
         dp.update.outer_middleware(ErrorMiddleware())
 
     @staticmethod
