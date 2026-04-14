@@ -1,40 +1,65 @@
 services:
-  bot:
-    build: .
-    env_file:
-      - .env
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    restart: unless-stopped
-    ports:
-      - "${WEBHOOK_PORT:-8080}:${WEBHOOK_PORT:-8080}"
+    bot:
+        build: .
+        environment:
+            DB_HOST: postgres
+            REDIS_HOST: redis
+            WEBHOOK_PORT: 8080
+        env_file:
+            - .env
+        depends_on:
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        restart: unless-stopped
 
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
+    postgres:
+        image: postgres:16-alpine
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+        restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
+    redis:
+        image: redis:7-alpine
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+        restart: unless-stopped
+
+    nginx:
+        image: nginx:alpine
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        environment:
+            - DOMAIN=${WEBHOOK_BASE_URL}
+            - HASH=
+        volumes:
+            - ./.deploy/nginx/templates:/etc/nginx/templates:ro
+            - ./.deploy/nginx/certbot/conf:/etc/letsencrypt
+            - ./.deploy/nginx/certbot/www:/var/www/certbot
+        depends_on:
+            - bot
+
+    certbot:
+        image: certbot/certbot
+        volumes:
+            - ./.deploy/nginx/certbot/conf:/etc/letsencrypt
+            - ./.deploy/nginx/certbot/www:/var/www/certbot
+        entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
-  postgres_data:
+    postgres_data:
