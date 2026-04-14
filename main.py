@@ -1,4 +1,5 @@
 import os
+import sys
 
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiohttp.web import Application, run_app
@@ -29,10 +30,19 @@ def main():
         bot=BOT,
         secret_token=CONFIG.webhook.X_Telegram_Bot_Api_Secret_Token,
     ).register(app, CONFIG.webhook.PATH)
-    setup_application(app, DISPATCHER, bot=BOT, config=CONFIG)
     register_tortoise(app, TORTOISE_ORM, generate_schemas=True)
+    setup_application(app, DISPATCHER, bot=BOT, config=CONFIG)
     run_app(app, host=CONFIG.webhook.HOST, port=CONFIG.webhook.PORT)
 
 
 if __name__ == "__main__":
+    if sys.platform == "win32":
+        import winloop  # pyright: ignore
+
+        winloop.install()
+    else:
+        import uvloop  # pyright: ignore
+
+        uvloop.install()
+
     main()

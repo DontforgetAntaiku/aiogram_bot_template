@@ -1,4 +1,4 @@
-from .user import user_router
+from .user import router as user_router
 
 BOT_ROUTERS_LIST = (user_router,)
 

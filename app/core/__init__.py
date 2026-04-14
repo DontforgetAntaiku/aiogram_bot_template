@@ -10,7 +10,7 @@ from aiogram.utils.i18n import I18n
 from app.utils.classes.config import Config
 from app.utils.classes.services import Services
 
-LOG_LEVEL: Final[int] = logging.ERROR
+LOG_LEVEL: Final[int] = logging.INFO
 
 WORK_DIR: Final[str] = os.path.dirname(__file__)
 
@@ -29,5 +29,5 @@ try:
     from aiogram_dialog import BgManagerFactory, setup_dialogs
 
     BG_FACTORY: BgManagerFactory = setup_dialogs(DISPATCHER)
-except Exception:
-    pass
+except ModuleNotFoundError:
+    logging.info("aiogram_dialog is not installed")

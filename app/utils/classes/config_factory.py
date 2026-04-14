@@ -42,22 +42,30 @@ class ConfigFactory(ABC):
             return value.lower() in ("true", "1", "yes")
         elif var_type in (list[int], tuple[int]):
             return (
-                tuple(map(int, value.split(",")))
+                tuple(map(int, value.strip(",").split(",")))
                 if var_type is tuple[int]
-                else list(map(int, value.split(",")))
+                else list(map(int, value.strip(",").split(",")))
             )
         elif var_type in (list[str], tuple[str]):
             return (
-                tuple(value.split(",")) if var_type is tuple[str] else value.split(",")
+                tuple(value.strip(",").split(","))
+                if var_type is tuple[str]
+                else value.strip(",").split(",")
             )
         elif var_type in (list[bool], tuple[bool]):
             return (
                 tuple(
-                    map(lambda x: x.lower() in ("true", "1", "yes"), value.split(","))
+                    map(
+                        lambda x: x.lower() in ("true", "1", "yes"),
+                        value.strip(",").split(","),
+                    )
                 )
                 if var_type is tuple[bool]
                 else list(
-                    map(lambda x: x.lower() in ("true", "1", "yes"), value.split(","))
+                    map(
+                        lambda x: x.lower() in ("true", "1", "yes"),
+                        value.strip(",").split(","),
+                    )
                 )
             )
         raise TypeError(f"Unsupported type: {var_type}")

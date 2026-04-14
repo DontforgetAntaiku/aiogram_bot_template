@@ -13,6 +13,7 @@ from app.site.routers.main.view import webhook
 from app.utils.classes.config import Config
 from app.utils.middlewares.bot.errors import ErrorMiddleware
 from app.utils.middlewares.bot.i18n import I18NMiddleware
+from app.utils.middlewares.bot.user import UserMiddleware
 
 
 class Services:
@@ -23,7 +24,9 @@ class Services:
 
     @staticmethod
     def get_storage(redis: Redis):
-        storage = RedisStorage(redis, key_builder=DefaultKeyBuilder(with_destiny=True))
+        storage = RedisStorage(
+            redis, key_builder=DefaultKeyBuilder(with_destiny=True, with_bot_id=True)
+        )
         return storage
 
     @staticmethod
@@ -38,6 +41,7 @@ class Services:
     def initialize_bot_middlewares(dp: Dispatcher, i18n: I18n):
         I18NMiddleware(i18n).setup(dp)
         dp.update.outer_middleware(ErrorMiddleware())
+        dp.update.outer_middleware(UserMiddleware())
 
     @staticmethod
     async def on_startup(bot: Bot, config: Config) -> None:
@@ -58,7 +62,6 @@ class Services:
 
     @staticmethod
     def setup_aiogram_dialogs(dp: Dispatcher):
-
         dp.include_routers()
 
     @staticmethod
